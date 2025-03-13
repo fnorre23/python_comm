@@ -3,11 +3,6 @@ from pythonosc import dispatcher
 from pythonosc import osc_server 
 from pythonosc import udp_client
 
-import random
-import time
-import threading  # Add threading for parallel execution
-
-
 # This script receives OSC messages from pd, uses them as parameters in pyhton functions
 # and sends functions' output back as OSC messages. It is an ideal tool to process
 # information comming from puredata's GUI (or any software that runs OSC) to take advanatge
@@ -45,13 +40,6 @@ def myfunction2(address, *message):
     a = message
     b = a[0]+1
     talk2pd(args.ipIN, args.portOUT, address, (b,1,b, 2,b,3,b,4))
-
-def myfunction3(address):
-    for i in range(1, 10):
-        message = random.random()
-        talk2pd(args.ipIN, args.portOUT, address, message)
-        time.sleep(1)
-        print(message)
         
 
 
@@ -99,11 +87,6 @@ if __name__ == "__main__":
     # wrap up inputs
     outputAddress = [args.portOUT, args.uripathOUT]
     inputAddress = [args.ipIN, args.portIN, args.uripathIN]
-    
-    # Run the OSC server in a separate thread
-    server_thread = threading.Thread(target=listen2pd, args=(inputAddress, outputAddress))
-    server_thread.daemon = True  # Ensures the thread closes when the script stops
-    server_thread.start()
-
-    myfunction3("/slider")
-    
+    # listen
+    listen2pd(inputAddress, outputAddress)
+        
